@@ -21,7 +21,8 @@ int main() {
     x_hat << 250,
              200;
     double stop = 1e-5;
-    VectorXd delta = VectorXd::Zero(2);
+    VectorXd delta, w;
+    MatrixXd A;
     do {
         MatrixXd A = DesignMatrix(ctrlPts, x_hat);
         MatrixXd N = A.transpose()*P*A;
@@ -34,5 +35,11 @@ int main() {
     while (delta.cwiseAbs().maxCoeff() > stop);
     cout << "Approximated Coordinates of P: " << endl;
     cout << x_hat << endl;
+    A=DesignMatrix(ctrlPts,x_hat); //make sure most recent values is used
+    w=Misclosure(l,ctrlPts,x_hat); // as above
+    VectorXd v_hat = A*delta+w; //update v_hat
+    double sigma0Hat_sq = (v_hat.transpose()*P*v_hat)(0,0)/(l.rows() - 2);
+    cout << "a-posteriori: " << sigma0Hat_sq << endl;
+    VectorXd l_hat = l*v_hat;
     return 0;
 }
