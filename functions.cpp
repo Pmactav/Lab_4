@@ -56,8 +56,10 @@ void WriteMatrixToFile(const MatrixXd &Mat, const string& filename, unsigned int
     out.close();
 }
 
-MatrixXd DesignMatrix(const MatrixXd &ctrlPts, const double &x0, const double &y0) {
+MatrixXd DesignMatrix(const MatrixXd &ctrlPts, const MatrixXd& x_hat) {
     MatrixXd A(ctrlPts.rows(),2);
+    double x0 = x_hat(0,0);
+    double y0 = x_hat(1,0);
     for (int i = 0; i < ctrlPts.rows(); i++) {
         double deltaX = (x0 - ctrlPts(i, 0));
         double deltaY = (y0 - ctrlPts(i, 1));
@@ -68,8 +70,10 @@ MatrixXd DesignMatrix(const MatrixXd &ctrlPts, const double &x0, const double &y
     return A;
 }
 
-MatrixXd Misclosure(const MatrixXd &l, const MatrixXd &ctrlPts, const double &x0, const double &y0) {
+MatrixXd Misclosure(const MatrixXd &l, const MatrixXd &ctrlPts, const MatrixXd& x_hat) {
     MatrixXd W(ctrlPts.rows(), 1);
+    double x0 = x_hat(0,0);
+    double y0 = x_hat(1,0);
     for (int i = 0; i < ctrlPts.rows(); i++) {
         double deltaX = (x0 - ctrlPts(i, 0));
         double deltaY = (y0 - ctrlPts(i, 1));
