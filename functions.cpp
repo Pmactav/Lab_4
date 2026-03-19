@@ -82,3 +82,34 @@ MatrixXd Misclosure(const MatrixXd &l, const MatrixXd &ctrlPts, const MatrixXd& 
     }
     return W;
 }
+
+MatrixXd DesignMatrixAz(const MatrixXd &ctrlPts, const MatrixXd &x_hat) {
+    int n = ctrlPts.rows();
+    MatrixXd Aaz(n, 2);
+    double x0 = x_hat(0, 0);
+    double y0 = x_hat(1, 0);
+    for (int i = 0; i < n; i++) {
+        double deltaX = (x0 - ctrlPts(i, 0));
+        double deltaY = (y0 - ctrlPts(i, 1));
+        double denom = deltaX * deltaX + deltaY * deltaY;
+        Aaz(i, 0) = -deltaY / denom;
+        Aaz(i, 1) = deltaX / denom;
+    }
+    return Aaz;
+}
+
+MatrixXd MisclosureAz(const MatrixXd &az, const MatrixXd &ctrlPts, const MatrixXd &x_hat) {
+    int n = ctrlPts.rows();
+    VectorXd Waz(n);
+    double x0 = x_hat(0, 0);
+    double y0 = x_hat(1, 0);
+    for (int i = 0; i < n; i++) {
+        double deltaX = (x0 - ctrlPts(i, 0));
+        double deltaY = (y0 - ctrlPts(i, 1));
+        double theta = atan2(-deltaX, -deltaY);
+        double wi = az(i, 0)-theta;
+        while (wi > M_PI)wi-=2*M_PI;
+        while (wi < -M_PI)wi+=2*M_PI;
+        Waz(i)=wi;}
+    return Waz;
+}

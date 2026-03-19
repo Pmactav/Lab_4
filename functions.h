@@ -19,5 +19,7 @@ MatrixXd ReadDatatoMatrix(const string& filename);
 void WriteMatrixToFile(const MatrixXd& Mat, const string& filename, unsigned int precision);
 MatrixXd DesignMatrix(const MatrixXd& ctrlPts, const MatrixXd& x_hat);
 MatrixXd Misclosure(const MatrixXd& l,const MatrixXd &ctrlPts, const MatrixXd& x_hat);
+MatrixXd DesignMatrixAz(const MatrixXd& ctrlPts, const MatrixXd& x_hat);
+MatrixXd MisclosureAz(const MatrixXd& az,const MatrixXd &ctrlPts, const MatrixXd& x_hat);
 
 #endif //LAB_2_FUNCTIONS_H
