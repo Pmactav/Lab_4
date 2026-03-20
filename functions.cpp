@@ -108,8 +108,7 @@ MatrixXd MisclosureAz(const MatrixXd &az, const MatrixXd &ctrlPts, const MatrixX
         double deltaY = (y0 - ctrlPts(i, 1));
         double theta = atan2(-deltaX, -deltaY);
         double wi = az(i, 0)-theta;
-        while (wi > M_PI)wi-=2*M_PI;
-        while (wi < -M_PI)wi+=2*M_PI;
+        wi = wi - 2*M_PI*floor((wi + M_PI) / (2 * M_PI));
         Waz(i)=wi;}
     return Waz;
 }

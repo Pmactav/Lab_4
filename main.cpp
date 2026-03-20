@@ -30,8 +30,8 @@ int main() {
         MatrixXd w = Misclosure(l, ctrlPts, x_hat);
         MatrixXd u = A.transpose()*P*w;
         delta = -N.inverse()*u;
-        cout << "delta: " << endl;
-        cout << delta << endl;
+        //cout << "delta: " << endl;
+        //cout << delta << endl;
         x_hat += delta;}
     while (delta.cwiseAbs().maxCoeff() > stop);
     cout << "Approximated Coordinates of P: " << endl;
@@ -52,19 +52,31 @@ int main() {
     //cout << "Largest Misclosure: " << check.cwiseAbs().maxCoeff() << endl;
     // Task 3
     MatrixXd az = ReadDatatoMatrix("../az_rad.txt");
-    cout << "az: " << endl << az << endl;
+    //cout << "az: " << endl << az << endl;
     double azStDevSec = 20.0;
     double azStDevRad = (azStDevSec/3600.0)*M_PI/180.0;
-    cout << "azStDevRad: " << azStDevRad << endl;
+    //cout << "azStDevRad: " << azStDevRad << endl;
     double azWeight = 1.0/(azStDevRad*azStDevRad);
-    cout << "azWeight: " << azWeight << endl;
+    //cout << "azWeight: " << azWeight << endl;
     MatrixXd Paz = MatrixXd::Identity(az.rows(), az.rows()) * azWeight;
-    MatrixXd Aaz = DesignMatrixAz(ctrlPts, x_hat);
-    MatrixXd Naz = Aaz.transpose()*Paz*Aaz;
-    VectorXd waz = MisclosureAz(az, ctrlPts, x_hat);
-    MatrixXd uaz = Aaz.transpose()*Paz*waz;
-    VectorXd deltaAz = -Naz.inverse()*uaz;
-    cout << waz << endl;
+    VectorXd deltaAz;
+    MatrixXd x_hatAz(2,1);
+    x_hatAz << 250,
+               200;
+    do {
+        MatrixXd Aaz = DesignMatrixAz(ctrlPts, x_hatAz);
+        cout << "Aaz: " << endl;
+        cout << Aaz << endl;
+        MatrixXd Naz = Aaz.transpose()*Paz*Aaz;
+        VectorXd waz = MisclosureAz(az, ctrlPts, x_hatAz);
+        MatrixXd uaz = Aaz.transpose()*Paz*waz;
+        deltaAz = -Naz.inverse()*uaz;
+        x_hatAz += deltaAz;
+        cout << "deltaAz: " << endl;
+        cout << deltaAz << endl;
+    } while (deltaAz.cwiseAbs().maxCoeff() > stop);
+    cout << "Approximated Coordinates of Paz: " << endl;
+    cout << x_hatAz << endl;
 
     return 0;
 }
