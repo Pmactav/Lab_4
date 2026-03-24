@@ -32,9 +32,9 @@ int main() {
         delta = -N.inverse()*u;//during testing cout delta to confirm it is converging
         x_hat += delta;}
     while (delta.cwiseAbs().maxCoeff() > stop);
+    cout << "Last delta: " << endl << delta << endl; //should be 0,0
     cout << "Approximated Coordinates of P: " << endl;
     cout << x_hat << endl;
-    //
     A=DesignMatrix(ctrlPts,x_hat); //repopulate outside the loop with correction
     w=Misclosure(l,ctrlPts,x_hat); // as above
     MatrixXd N = A.transpose()*P*A;
@@ -42,6 +42,7 @@ int main() {
     double sigma0Hat_sq = (v_hat.transpose()*P*v_hat)(0,0)/(l.rows() - 2);
     cout << "a-posteriori distance: " << sigma0Hat_sq << endl;
     VectorXd l_hat = l+v_hat;
+    WriteMatrixToFile(l_hat, "../l_hat.txt", 10);
     MatrixXd Cx_hat = sigma0Hat_sq*N.inverse();
     VectorXd stdX = Cx_hat.diagonal().cwiseAbs().array().sqrt().matrix();
     WriteMatrixToFile(stdX, "../Cx_hat.txt", 10);
@@ -75,6 +76,7 @@ int main() {
         deltaAz = -Naz.inverse()*uaz;//during testing cout delta to confirm it is converging
         x_hatAz += deltaAz;
     } while (deltaAz.cwiseAbs().maxCoeff() > stop);
+    cout << "Last deltaAz: " << endl << deltaAz << endl; //should be 0,0
     cout << "Approximated Coordinates of Paz: " << endl;
     cout << x_hatAz << endl;
     //
@@ -85,6 +87,8 @@ int main() {
     double sigma0Hat_sqaz = (v_hataz.transpose()*Paz*v_hataz)(0,0)/(laz.rows() - 2);
     cout << "a-posteriori azimuth: " << sigma0Hat_sqaz << endl;
     VectorXd l_hataz = laz+v_hataz;
+    VectorXd l_hat_deg = l_hataz * (180.0 / M_PI);
+    WriteMatrixToFile(l_hat_deg, "../l_hat_deg.txt", 6);
     MatrixXd Cx_hataz = sigma0Hat_sqaz*Naz.inverse();
     VectorXd stdXaz = Cx_hataz.diagonal().cwiseAbs().array().sqrt().matrix();
     WriteMatrixToFile(stdX, "../Cx_hataz.txt", 10);
@@ -96,7 +100,7 @@ int main() {
     VectorXd stdVaz = Cvaz.diagonal().cwiseAbs().array().sqrt().matrix();
     WriteMatrixToFile(stdV, "../Cvaz.txt", 10);
     MatrixXd checkaz = MisclosureAz(l_hataz,ctrlPts,x_hatAz).array().abs();
-    //cout << "Largest Misclosure: " << checkaz.cwiseAbs().maxCoeff() << endl;
+    cout << "Largest Misclosure: " << checkaz.cwiseAbs().maxCoeff() << endl;
     //cout << checkaz << endl;
     double rho_x_hataz = Cx_hataz(0,1)/(sqrt(Cx_hataz(0,0))*sqrt(Cx_hataz(1,1)));
     cout << "rho_x_hataz: " << rho_x_hataz << endl;
